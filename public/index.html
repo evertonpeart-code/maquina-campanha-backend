@@ -1,95 +1,98 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Máquina de Campanha IA</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f5f5f5;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      margin: 0;
-      text-align: center;
-    }
-
-    .container {
-      background: white;
-      padding: 40px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-
-    h1 {
-      color: #333;
-    }
-
-    p {
-      margin-top: 10px;
-    }
-
-    button {
-      background: #0f9d58;
-      color: white;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 16px;
-      margin-top: 20px;
-    }
-
-    button:hover {
-      background: #0b7d44;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h1>🚀 Máquina de Campanha IA está online!</h1>
-    <p>Interface conectada com sucesso.</p>
-    <button onclick="gerarCampanha()">Gerar Campanha</button>
-  </div>
-
-  <script>
-    async function gerarCampanha() {
-      const id = prompt("Digite o ID da conta do Google Ads:");
-      const produto = prompt("Cole aqui a URL do produto:");
-      const afiliado = prompt("Cole aqui sua URL de afiliado:");
-
-      if (!id || !produto || !afiliado) {
-        alert("Por favor, preencha todos os campos.");
-        return;
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Máquina de Campanha IA</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f2f2f2;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
       }
 
-      try {
-        const resposta = await fetch('/api/gerar-campanha', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            id_google_ads: id,
-            url_produto: produto,
-            url_afiliado: afiliado
-          })
-        });
-
-        const data = await resposta.json();
-
-        if (data.sucesso) {
-          const blob = new Blob([data.csv], { type: 'text/plain' });
-          const link = document.createElement('a');
-          link.href = URL.createObjectURL(blob);
-          link.download = 'campanha-google-ads.txt';
-          link.click();
-        } else {
-          alert('Erro ao gerar campanha: ' + data.erro);
-        }
-      } catch (err) {
-        alert('Erro de conexão com a IA.');
+      .container {
+        background: white;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        max-width: 600px;
+        width: 100%;
       }
-    }
+
+      h1 {
+        font-size: 22px;
+        color: #333;
+        margin-bottom: 10px;
+      }
+
+      p {
+        color: #666;
+        margin-bottom: 20px;
+      }
+
+      input {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+      }
+
+      button {
+        background: #00b37e;
+        color: white;
+        padding: 12px 25px;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background: #009168;
+      }
+
+      pre {
+        text-align: left;
+        background: #f4f4f4;
+        padding: 15px;
+        border-radius: 8px;
+        font-size: 13px;
+        overflow-x: auto;
+      }
+
+      .footer {
+        margin-top: 30px;
+        font-size: 12px;
+        color: #aaa;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🚀 Máquina de Campanha IA está online!</h1>
+      <p>Interface conectada com sucesso.</p>
+
+      <form id="form-campanha">
+        <input type="text" id="id_google_ads" placeholder="ID do Google Ads" required />
+        <input type="text" id="url_produto" placeholder="URL do Produto" required />
+        <input type="text" id="url_afiliado" placeholder="URL do Afiliado" required />
+        <button type="submit">Gerar Campanha</button>
+      </form>
+
+      <div id="resposta" style="margin-top: 20px;"></div>
+
+      <div class="footer">v1.0 - Máquina de Campanha IA</div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
