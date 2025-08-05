@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -16,15 +15,22 @@
       margin: 0;
       text-align: center;
     }
+
     .container {
       background: white;
       padding: 40px;
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
+
     h1 {
       color: #333;
     }
+
+    p {
+      margin-top: 10px;
+    }
+
     button {
       background: #0f9d58;
       color: white;
@@ -33,7 +39,9 @@
       border-radius: 6px;
       cursor: pointer;
       font-size: 16px;
+      margin-top: 20px;
     }
+
     button:hover {
       background: #0b7d44;
     }
@@ -43,8 +51,45 @@
   <div class="container">
     <h1>🚀 Máquina de Campanha IA está online!</h1>
     <p>Interface conectada com sucesso.</p>
-    <button onclick="alert('IA em construção!')">Gerar Campanha</button>
+    <button onclick="gerarCampanha()">Gerar Campanha</button>
   </div>
-</body>
-</html>
 
+  <script>
+    async function gerarCampanha() {
+      const id = prompt("Digite o ID da conta do Google Ads:");
+      const produto = prompt("Cole aqui a URL do produto:");
+      const afiliado = prompt("Cole aqui sua URL de afiliado:");
+
+      if (!id || !produto || !afiliado) {
+        alert("Por favor, preencha todos os campos.");
+        return;
+      }
+
+      try {
+        const resposta = await fetch('/api/gerar-campanha', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            id_google_ads: id,
+            url_produto: produto,
+            url_afiliado: afiliado
+          })
+        });
+
+        const data = await resposta.json();
+
+        if (data.sucesso) {
+          const blob = new Blob([data.csv], { type: 'text/plain' });
+          const link = document.createElement('a');
+          link.href = URL.createObjectURL(blob);
+          link.download = 'campanha-google-ads.txt';
+          link.click();
+        } else {
+          alert('Erro ao gerar campanha: ' + data.erro);
+        }
+      } catch (err) {
+        alert('Erro de conexão com a IA.');
+      }
+    }
