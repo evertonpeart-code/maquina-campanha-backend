@@ -29,13 +29,14 @@ Responda no formato estruturado, com colunas, campos de preenchimento e instruç
 `;
 
   try {
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4',
-      messages: [
-        { role: 'user', content: prompt }
-      ],
-      temperature: 0.4,
-    });
+    const chatCompletion = await openai.chat.completions.create({
+  model: "gpt-3.5-turbo",
+  messages: [
+    { role: "system", content: "Você é um gerador de campanhas Google Ads..." },
+    { role: "user", content: "Produto: https://..." }
+  ]
+});
+
 
     const resposta = completion.choices[0].message.content;
     res.json({ sucesso: true, csv: resposta });
