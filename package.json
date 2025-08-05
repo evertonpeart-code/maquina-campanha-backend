@@ -1,6 +1,8 @@
+
 {
-  "name": "maquina-campanha-ia",
+  "name": "maquina-campanha-final",
   "version": "1.0.0",
+  "description": "Máquina de Campanha IA com interface real",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
