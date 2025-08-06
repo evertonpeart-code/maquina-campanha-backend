@@ -1,41 +1,33 @@
 const axios = require('axios');
+require('dotenv').config();
 
-// Cliente Axios configurado para OpenRouter
 const openRouterClient = axios.create({
   baseURL: 'https://openrouter.ai/api/v1',
-  timeout: 15000,
+  timeout: 20000,
   headers: {
-    'HTTP-Referer': 'http://localhost:3000', // Substitua pelo seu domínio real quando for para produção
-    'X-Title': 'MaquinaCampanhaIA'
-  }
+    'HTTP-Referer': 'http://localhost:3000', // ou o domínio real quando publicar
+    'X-Title': 'MaquinaCampanhaIA',
+  },
 });
 
-// Função principal de geração de campanha via OpenRouter
 async function gerarCampanha(prompt) {
   try {
     const response = await openRouterClient.post(
       '/chat/completions',
       {
-        model: 'openai/gpt-4o',
-        messages: [
-          {
-            role: 'user',
-            content: prompt
-          }
-        ]
+        model: 'openai/gpt-4o', // você pode alterar o modelo se preferir
+        messages: [{ role: 'user', content: prompt }],
       },
       {
         headers: {
-          Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`
-        }
+          Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        },
       }
     );
 
     const resposta = response?.data?.choices?.[0]?.message?.content;
 
-    if (!resposta) {
-      throw new Error('Resposta vazia da IA');
-    }
+    if (!resposta) throw new Error('Resposta vazia da IA');
 
     return resposta;
   } catch (err) {
