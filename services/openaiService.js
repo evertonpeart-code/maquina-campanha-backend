@@ -1,40 +1,46 @@
-// 1. Importa a biblioteca oficial da OpenAI (funciona com OpenRouter também)
-const { OpenAI } = require('openai');
+// services/openaiService.js
+const axios = require('axios');
 
-// 2. Cria uma instância com sua API Key e URL do OpenRouter
-const openai = new OpenAI({
-  apiKey: process.env.OPENROUTER_API_KEY,
+const openRouterClient = axios.create({
   baseURL: 'https://openrouter.ai/api/v1',
+  timeout: 15000,
+  headers: {
+    'HTTP-Referer': 'http://localhost:3000', // Altere para seu domínio real depois
+    'X-Title': 'MaquinaCampanhaIA'
+  }
 });
 
-// 3. Função principal para gerar campanha
 async function gerarCampanha(prompt) {
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 15000); // 15 segundos
-
   try {
-    const completion = await openai.chat.completions.create({
-      model: 'openrouter/gpt-3.5-turbo', // ou outro modelo disponível
-      messages: [
-        { role: "system", content: "Você é uma IA que gera campanhas CSV para Google Ads Editor com SEO e performance máxima." },
-        { role: "user", content: prompt }
-      ],
-      temperature: 0.7,
-      max_tokens: 2000,
-      signal: controller.signal
-    });
+    const response = await openRouterClient.post(
+      '/chat/completions',
+      {
+        model: 'openai/gpt-4o',
+        messages: [
+          {
+            role: 'user',
+            content: prompt
+          }
+        ]
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`
+        }
+      }
+    );
 
-    clearTimeout(timeout);
-    return completion.choices[0].message.content;
+    const resposta = response?.data?.choices?.[0]?.message?.content;
 
-  } catch (error) {
-    if (error.name === 'AbortError') {
-      throw new Error('⏱ Tempo de resposta da IA esgotado.');
+    if (!resposta) {
+      throw new Error('Resposta vazia da IA');
     }
 
-    throw error?.response?.data?.error?.message || error;
+    return resposta;
+  } catch (err) {
+    console.error('[ERRO IA]', err.message || err);
+    throw new Error('Falha ao gerar campanha com OpenRouter.');
   }
 }
 
-// 4. Exporta a função para uso externo
-module.exports = gerarCampanha;
+module.exports = { gerarCampanha };
