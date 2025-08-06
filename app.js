@@ -1,16 +1,23 @@
-const express = require("express");
-const app = express();
-const dotenv = require("dotenv");
-const campaignRoutes = require("./routes/campaignRoutes");
+require('dotenv').config();
+const express = require('express');
+const cors = require('cors');
+const campaignRoutes = require('./routes/campaignRoutes');
 
-dotenv.config();
+const app = express();
+
+// Segurança: aviso se não houver chave da IA
+if (!process.env.OPENROUTER_API_KEY) {
+  console.warn('⚠️  AVISO: OPENROUTER_API_KEY não está definida no .env');
+}
+
+app.use(cors());
 app.use(express.json());
 
 // Rotas
-app.use("/api/campaign", campaignRoutes);
+app.use('/api/campaign', campaignRoutes);
 
-// Inicialização
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
+app.get('/', (req, res) => {
+  res.send('🚀 Máquina de Campanha IA está ativa!');
 });
+
+module.exports = app;
