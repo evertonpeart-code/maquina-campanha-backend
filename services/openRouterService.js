@@ -1,4 +1,3 @@
-// services/openRouterService.js
 const axios = require('axios');
 
 // Cliente Axios configurado para OpenRouter
@@ -6,12 +5,12 @@ const openRouterClient = axios.create({
   baseURL: 'https://openrouter.ai/api/v1',
   timeout: 15000,
   headers: {
-    'HTTP-Referer': 'http://localhost:3000', // Altere para seu domínio real depois
+    'HTTP-Referer': 'http://localhost:3000', // Substitua pelo seu domínio real quando for para produção
     'X-Title': 'MaquinaCampanhaIA'
   }
 });
 
-// Função que envia o prompt e retorna resposta da IA via OpenRouter
+// Função principal de geração de campanha via OpenRouter
 async function gerarCampanha(prompt) {
   try {
     const response = await openRouterClient.post(
