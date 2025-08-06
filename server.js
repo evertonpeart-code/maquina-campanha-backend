@@ -1,28 +1,37 @@
+// ==========================
+// IMPORTAÇÕES
+// ==========================
 const express = require('express');
 const path = require('path');
 const dotenv = require('dotenv');
-const gerarCampanha = require('./services/openaiService');
+const gerarCampanha = require('./services/openaiService'); // usa OpenRouter
 
 dotenv.config();
 
-// VERIFICAÇÃO ATUALIZADA (OpenRouter)
+// ==========================
+// VERIFICAÇÃO DE CHAVE
+// ==========================
 if (!process.env.OPENROUTER_API_KEY) {
   console.error("❌ OPENROUTER_API_KEY não configurada no ambiente!");
   process.exit(1);
 }
 
+// ==========================
+// CONFIGURAÇÃO DO APP
+// ==========================
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 10000;
 
-// Middlewares
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 
-// Rota principal
+// ==========================
+// ROTA PRINCIPAL
+// ==========================
 app.post('/api/gerar-campanha', async (req, res) => {
   const { id_google_ads, url_produto, url_afiliado } = req.body;
 
-  // Validação de campos
+  // Validação
   if (!id_google_ads || !url_produto || !url_afiliado) {
     return res.status(400).json({
       sucesso: false,
@@ -30,6 +39,7 @@ app.post('/api/gerar-campanha', async (req, res) => {
     });
   }
 
+  // Prompt formatado
   const prompt = `
 Você é uma IA especializada em criar campanhas Google Ads em CSV para o Google Ads Editor. Gere uma campanha ultra otimizada com SEO, com base nestes dados:
 
@@ -46,7 +56,7 @@ Responda no formato estruturado, com colunas, campos de preenchimento e instruç
     const resposta = await gerarCampanha(prompt);
     res.json({ sucesso: true, csv: resposta });
   } catch (error) {
-    console.error("❌ Erro ao gerar campanha:", error);
+    console.error("❌ Erro ao gerar campanha:", error?.response?.data || error.message);
     res.status(500).json({
       sucesso: false,
       erro: 'Erro ao gerar campanha com a IA.',
@@ -54,7 +64,9 @@ Responda no formato estruturado, com colunas, campos de preenchimento e instruç
   }
 });
 
-// Inicializa o servidor
+// ==========================
+// INICIALIZA SERVIDOR
+// ==========================
 app.listen(port, () => {
   console.log(`🚀 Servidor rodando em http://localhost:${port}`);
 });
