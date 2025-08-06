@@ -1,6 +1,7 @@
-// services/openaiService.js
+// services/openRouterService.js
 const axios = require('axios');
 
+// Cliente Axios configurado para OpenRouter
 const openRouterClient = axios.create({
   baseURL: 'https://openrouter.ai/api/v1',
   timeout: 15000,
@@ -10,6 +11,7 @@ const openRouterClient = axios.create({
   }
 });
 
+// Função que envia o prompt e retorna resposta da IA via OpenRouter
 async function gerarCampanha(prompt) {
   try {
     const response = await openRouterClient.post(
