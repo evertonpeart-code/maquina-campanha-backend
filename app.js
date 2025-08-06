@@ -1,21 +1,20 @@
-require('dotenv').config();
+// app.js
+// Configuração principal da aplicação Express
+
 const express = require('express');
 const cors = require('cors');
 const campaignRoutes = require('./routes/campaignRoutes');
 
 const app = express();
 
-// Segurança: aviso se não houver chave da IA
-if (!process.env.OPENROUTER_API_KEY) {
-  console.warn('⚠️  AVISO: OPENROUTER_API_KEY não está definida no .env');
-}
+// Middlewares globais
+app.use(cors()); // Libera acesso de diferentes domínios (CORS)
+app.use(express.json()); // Permite ler JSON no corpo das requisições
 
-app.use(cors());
-app.use(express.json());
-
-// Rotas
+// Rotas principais
 app.use('/api/campaign', campaignRoutes);
 
+// Rota raiz para teste
 app.get('/', (req, res) => {
   res.send('🚀 Máquina de Campanha IA está ativa!');
 });
