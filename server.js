@@ -1,30 +1,20 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const bodyParser = require('body-parser');
-const { gerarCampanha } = require('./services/openRouterService'); // CORRIGIDO
-const fs = require('fs');
+const campaignRoutes = require('./routes/campaignRoutes');
+
 const app = express();
-const port = process.env.PORT || 10000;
+const port = process.env.PORT || 3000;
 
 app.use(cors());
-app.use(bodyParser.json());
-app.use(express.static('public'));
+app.use(express.json());
 
-app.post('/api/gerar-campanha', async (req, res) => {
-  const { prompt } = req.body;
-  console.log('🧠 Prompt enviado à IA:\n', prompt);
+app.use('/api', campaignRoutes);
 
-  try {
-    const resultado = await gerarCampanha(prompt);
-    console.log('✅ Campanha gerada!');
-    res.json({ sucesso: true, resposta: resultado });
-  } catch (err) {
-    console.error('❌ Erro ao gerar campanha:', err.message);
-    res.status(500).json({ sucesso: false, erro: err.message });
-  }
+app.get('/', (req, res) => {
+  res.send('Máquina de Campanha IA está ativa 🚀');
 });
 
 app.listen(port, () => {
-  console.log(`🚀 Servidor rodando em http://localhost:${port}`);
+  console.log(`Servidor rodando em http://localhost:${port}`);
 });
