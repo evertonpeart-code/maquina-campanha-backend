@@ -5,7 +5,7 @@ const openRouterClient = axios.create({
   baseURL: 'https://openrouter.ai/api/v1',
   timeout: 15000,
   headers: {
-    'HTTP-Referer': 'https://seusite.com', // Substitua pelo domínio real depois
+    'Referer': 'https://seusite.com', // Ajuste para seu domínio real
     'X-Title': 'MaquinaCampanhaIA'
   }
 });
@@ -15,7 +15,7 @@ async function gerarCampanha(prompt) {
     const response = await openRouterClient.post(
       '/chat/completions',
       {
-        model: 'openai/gpt-4o', // Use o modelo desejado
+        model: 'openai/gpt-4o-mini', // Ajuste conforme sua assinatura e disponibilidade
         messages: [
           {
             role: 'user',
