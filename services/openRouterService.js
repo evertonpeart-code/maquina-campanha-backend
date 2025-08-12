@@ -10,7 +10,7 @@ const openRouterClient = axios.create({
   }
 });
 
-async function gerarCampanha(prompt) {
+async function gerarCampanha(prompt, retries = 2) {
   try {
     const response = await openRouterClient.post(
       '/chat/completions',
@@ -30,16 +30,29 @@ async function gerarCampanha(prompt) {
       }
     );
 
-    const resposta = response?.data?.choices?.[0]?.message?.content;
-
-    if (!resposta) {
-      throw new Error('Resposta vazia da IA');
+    if (
+      !response || 
+      !response.data || 
+      !response.data.choices || 
+      !Array.isArray(response.data.choices) || 
+      !response.data.choices[0] ||
+      !response.data.choices[0].message ||
+      !response.data.choices[0].message.content
+    ) {
+      throw new Error('Resposta da IA inválida ou vazia');
     }
 
-    return resposta;
+    return response.data.choices[0].message.content;
+
   } catch (err) {
     console.error('[ERRO OpenRouter]', err.message || err);
-    throw new Error('Falha ao gerar campanha com OpenRouter.');
+
+    if (retries > 0) {
+      console.log(`Tentando novamente... Restam ${retries} tentativas`);
+      return gerarCampanha(prompt, retries - 1);
+    }
+
+    throw new Error('Falha ao gerar campanha com OpenRouter após múltiplas tentativas.');
   }
 }
 
